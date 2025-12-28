@@ -61,26 +61,22 @@ export default function CalendarPage() {
       </div>
 
       {/* 日历 */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={setSelectedDate}
-            locale={zhCN}
-            className="rounded-md border"
-            modifiers={{
-              recorded: hasRecord,
-            }}
-            modifiersStyles={{
-              recorded: {
-                backgroundColor: 'hsl(var(--primary) / 0.1)',
-                fontWeight: 'bold',
-              },
-            }}
-          />
-        </CardContent>
-      </Card>
+      <Calendar
+        mode="single"
+        selected={selectedDate}
+        onSelect={setSelectedDate}
+        locale={zhCN}
+        className="w-full rounded-md border shadow-sm mb-6"
+        modifiers={{
+          recorded: hasRecord,
+        }}
+        modifiersStyles={{
+          recorded: {
+            backgroundColor: 'hsl(var(--primary) / 0.1)',
+            fontWeight: 'bold',
+          },
+        }}
+      />
 
       {/* 选中日期的成就 */}
       <div>
