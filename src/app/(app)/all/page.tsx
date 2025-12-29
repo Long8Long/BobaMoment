@@ -1,6 +1,6 @@
 /**
  * Input: useAchievementStore (状态)
- * Output: 全部记录列表界面
+ * Output: 全部记录列表界面（显示成就/感念类型标识）
  * Position: 主要功能页面，P1功能
  *
  * 更新规范: 一旦本文件被更新，务必更新开头的注释，以及所属文件夹的 README.md 文件
@@ -17,15 +17,17 @@ import { Input } from '@/components/ui/input'
 import { Search, Trash2 } from 'lucide-react'
 import { format, isToday } from 'date-fns'
 import { zhCN } from 'date-fns/locale/zh-CN'
-import { achievementDb, type Achievement } from '@/lib/db'
+import { achievementDb, type Achievement, RECORD_TYPES } from '@/lib/db'
 
 // P2功能：搜索
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const searchAchievements = async (keyword: string): Promise<Achievement[]> => {
   // TODO: 实现搜索功能
   return []
 }
 
 // P2功能：导出
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const exportData = () => {
   // TODO: 实现导出功能
 }
@@ -139,23 +141,33 @@ export default function AllPage() {
 
               {/* 当天的成就 */}
               <div className="space-y-2">
-                {achievements.map((achievement) => (
-                  <Card key={achievement.id}>
-                    <CardContent className="pt-3">
-                      <div className="flex gap-2">
-                        <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8 text-destructive shrink-0"
-                          onClick={() => handleDelete(achievement.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                {achievements.map((achievement) => {
+                  const typeConfig = RECORD_TYPES[achievement.type || 'achievement']
+                  return (
+                    <Card
+                      key={achievement.id}
+                      style={{
+                        borderLeftWidth: '4px',
+                        borderLeftColor: typeConfig.color
+                      }}
+                    >
+                      <CardContent className="pt-3">
+                        <div className="flex gap-2">
+                          <typeConfig.icon className="h-4 w-4 shrink-0 mt-0.5" style={{ color: typeConfig.color }} />
+                          <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 text-destructive shrink-0"
+                            onClick={() => handleDelete(achievement.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
               </div>
             </div>
           ))

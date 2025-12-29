@@ -1,6 +1,6 @@
 /**
  * Input: useAchievementStore (状态), achievementDb (数据层)
- * Output: 今日成就记录界面
+ * Output: 今日记录界面（成就/感念）
  * Position: 主要功能页面，P0核心功能
  *
  * 更新规范: 一旦本文件被更新，务必更新开头的注释，以及所属文件夹的 README.md 文件
@@ -13,13 +13,14 @@ import { useAchievementStore } from '@/stores/achievement'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Plus, Trash2, Edit2, CheckCircle2 } from 'lucide-react'
+import { RecordTypeSelector } from '@/components/feature/RecordTypeSelector'
+import { RECORD_TYPES } from '@/lib/db'
 
 const TARGET_COUNT = 3
 
 export default function TodayPage() {
-  const { todayAchievements, isLoading, loadTodayAchievements, addAchievement, deleteAchievement, updateAchievement } = useAchievementStore()
+  const { todayAchievements, currentType, typeStats, loadTodayAchievements, addAchievement, deleteAchievement, updateAchievement, setCurrentType } = useAchievementStore()
   const [input, setInput] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState('')
@@ -57,12 +58,23 @@ export default function TodayPage() {
 
   const count = todayAchievements.length
   const isComplete = count >= TARGET_COUNT
+  const currentTypeConfig = RECORD_TYPES[currentType]
 
   return (
     <div className="container max-w-md mx-auto px-4 py-6">
-      {/* 页头 */}
+      {/* 页头 - 添加类型统计 */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">今日成就</h1>
+        <h1 className="text-2xl font-bold">今日记录</h1>
+        <div className="flex gap-4 mt-2">
+          <div className="flex items-center gap-1.5">
+            <RECORD_TYPES.achievement.icon className="h-4 w-4" style={{ color: RECORD_TYPES.achievement.color }} />
+            <span className="text-sm">{typeStats.achievement} 成就</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <RECORD_TYPES.gratitude.icon className="h-4 w-4" style={{ color: RECORD_TYPES.gratitude.color }} />
+            <span className="text-sm">{typeStats.gratitude} 感念</span>
+          </div>
+        </div>
         <p className="text-muted-foreground mt-1">
           {isComplete ? (
             <span className="text-green-600 dark:text-green-400 font-medium">
@@ -75,11 +87,30 @@ export default function TodayPage() {
         </p>
       </div>
 
-      {/* 输入区域 */}
-      <Card className="mb-6">
+      {/* 类型选择器 */}
+      <Card className="mb-4">
+        <CardContent className="pt-4">
+          <RecordTypeSelector
+            value={currentType}
+            onChange={setCurrentType}
+          />
+          <p className="text-xs text-muted-foreground mt-2 text-center">
+            {currentTypeConfig.description}
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* 输入区域 - 添加类型主题色边框 */}
+      <Card
+        className="mb-6"
+        style={{
+          borderLeftWidth: '4px',
+          borderLeftColor: currentTypeConfig.color
+        }}
+      >
         <CardContent className="pt-6">
           <Textarea
-            placeholder="记录今天的小成就..."
+            placeholder={`记录今天的${currentTypeConfig.label}...`}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
@@ -104,61 +135,71 @@ export default function TodayPage() {
         </CardContent>
       </Card>
 
-      {/* 成就列表 */}
+      {/* 记录列表 - 根据类型显示不同样式 */}
       <div className="space-y-3">
         {todayAchievements.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            <p>今天还没有记录成就</p>
-            <p className="text-sm mt-1">开始记录你的第一个小成就吧！</p>
+            <p>今天还没有记录</p>
+            <p className="text-sm mt-1">开始记录你的第一条{currentTypeConfig.label}吧！</p>
           </div>
         ) : (
-          todayAchievements.map((achievement) => (
-            <Card key={achievement.id}>
-              <CardContent className="pt-4">
-                {editingId === achievement.id ? (
-                  <div className="space-y-2">
-                    <Textarea
-                      value={editContent}
-                      onChange={(e) => setEditContent(e.target.value)}
-                      rows={3}
-                      maxLength={200}
-                      className="resize-none"
-                    />
+          todayAchievements.map((achievement) => {
+            const typeConfig = RECORD_TYPES[achievement.type || 'achievement']
+            return (
+              <Card
+                key={achievement.id}
+                style={{
+                  borderLeftWidth: '4px',
+                  borderLeftColor: typeConfig.color
+                }}
+              >
+                <CardContent className="pt-4">
+                  {editingId === achievement.id ? (
+                    <div className="space-y-2">
+                      <Textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        rows={3}
+                        maxLength={200}
+                        className="resize-none"
+                      />
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={() => handleSaveEdit(achievement.id)}>
+                          保存
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                          取消
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
                     <div className="flex gap-2">
-                      <Button size="sm" onClick={() => handleSaveEdit(achievement.id)}>
-                        保存
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                        取消
-                      </Button>
+                      <typeConfig.icon className="h-4 w-4 shrink-0 mt-0.5" style={{ color: typeConfig.color }} />
+                      <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
+                      <div className="flex gap-1">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8"
+                          onClick={() => handleEdit(achievement.id, achievement.content)}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-destructive"
+                          onClick={() => handleDelete(achievement.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex gap-2">
-                    <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
-                    <div className="flex gap-1">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8"
-                        onClick={() => handleEdit(achievement.id, achievement.content)}
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-destructive"
-                        onClick={() => handleDelete(achievement.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))
+                  )}
+                </CardContent>
+              </Card>
+            )
+          })
         )}
       </div>
 

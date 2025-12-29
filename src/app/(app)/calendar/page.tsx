@@ -1,6 +1,6 @@
 /**
  * Input: useAchievementStore (状态), achievementDb (数据层)
- * Output: 日历回顾界面
+ * Output: 日历回顾界面（显示成就/感念类型标识）
  * Position: 主要功能页面，P1功能
  *
  * 更新规范: 一旦本文件被更新，务必更新开头的注释，以及所属文件夹的 README.md 文件
@@ -15,7 +15,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { zhCN } from 'date-fns/locale/zh-CN'
-import { achievementDb, type Achievement } from '@/lib/db'
+import { achievementDb, type Achievement, RECORD_TYPES } from '@/lib/db'
 
 export default function CalendarPage() {
   const { recordedDates, loadRecordedDates } = useAchievementStore()
@@ -89,19 +89,36 @@ export default function CalendarPage() {
               <p>当天没有记录</p>
             </div>
           ) : (
-            selectedAchievements.map((achievement) => (
-              <Card key={achievement.id}>
-                <CardContent className="pt-4">
-                  <p className="text-sm leading-relaxed">{achievement.content}</p>
-                  <Badge variant="outline" className="mt-2 text-xs">
-                    {new Date(achievement.createdAt).toLocaleTimeString('zh-CN', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </Badge>
-                </CardContent>
-              </Card>
-            ))
+            selectedAchievements.map((achievement) => {
+              const typeConfig = RECORD_TYPES[achievement.type || 'achievement']
+              return (
+                <Card
+                  key={achievement.id}
+                  style={{
+                    borderLeftWidth: '4px',
+                    borderLeftColor: typeConfig.color
+                  }}
+                >
+                  <CardContent className="pt-4">
+                    <div className="flex gap-2">
+                      <typeConfig.icon className="h-4 w-4 shrink-0 mt-0.5" style={{ color: typeConfig.color }} />
+                      <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <Badge variant="outline" className="text-xs" style={{ borderColor: typeConfig.color, color: typeConfig.color }}>
+                        {typeConfig.label}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {new Date(achievement.createdAt).toLocaleTimeString('zh-CN', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })
           )}
         </div>
       </div>
