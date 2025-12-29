@@ -11,6 +11,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useAchievementStore } from '@/stores/achievement'
 import { Card, CardContent } from '@/components/ui/card'
+import { TypeCard } from '@/components/feature/TypeCard'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -93,11 +94,11 @@ export default function AllPage() {
       </div>
 
       {/* 搜索栏（P2功能，基础实现） */}
-      <Card className="mb-6">
+      <Card className="mb-6 rounded-md">
         <CardContent className="pt-4">
           <div className="flex gap-2">
             <Input
-              placeholder="搜索成就内容..."
+              placeholder="搜索内容..."
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               onKeyDown={(e) => {
@@ -144,15 +145,12 @@ export default function AllPage() {
                 {achievements.map((achievement) => {
                   const typeConfig = RECORD_TYPES[achievement.type || 'achievement']
                   return (
-                    <Card
+                    <TypeCard
                       key={achievement.id}
-                      style={{
-                        borderLeftWidth: '4px',
-                        borderLeftColor: typeConfig.color
-                      }}
+                      type={achievement.type || 'achievement'}
+                      contentProps={{ className: 'pt-3' }}
                     >
-                      <CardContent className="pt-3">
-                        <div className="flex gap-2">
+                      <div className="flex gap-2">
                           <typeConfig.icon className="h-4 w-4 shrink-0 mt-0.5" style={{ color: typeConfig.color }} />
                           <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
                           <Button
@@ -162,10 +160,9 @@ export default function AllPage() {
                             onClick={() => handleDelete(achievement.id)}
                           >
                             <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
+                        </Button>
+                      </div>
+                    </TypeCard>
                   )
                 })}
               </div>
