@@ -68,6 +68,8 @@
   --border: #E6D8CB; /* 线稿浅棕 */
   --input: #E6D8CB; /* 表单边框 */
   --ring: #D2691E; /* focus 环巧克力橘 */
+  /* 感念类型颜色 - 深橄榄绿 */
+  --gratitude-primary: #6B8E23;
   --chart-1: #D2691E;
   --chart-2: #8C8278;
   --chart-3: #5A5048;
@@ -102,6 +104,8 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.553 0.013 58.071);
+  /* 感念类型暗色模式 */
+  --gratitude-primary: oklch(0.547 0.155 132.508);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
