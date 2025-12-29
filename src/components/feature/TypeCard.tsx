@@ -8,7 +8,7 @@
 
 'use client'
 
-import { Card, CardContent, CardContentProps } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 
@@ -32,7 +32,7 @@ export interface TypeCardProps extends Omit<React.ComponentProps<typeof Card>, '
   /** 子元素 */
   children: ReactNode
   /** CardContent 的 props */
-  contentProps?: CardContentProps
+  contentProps?: React.ComponentProps<typeof CardContent>
   /** 圆角大小 */
   rounded?: VariantProps<typeof typeCardVariants>['rounded']
 }
