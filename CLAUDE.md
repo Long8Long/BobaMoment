@@ -49,12 +49,13 @@ npm run lint
 
 ### 2. 状态管理层 (`src/stores/achievement.ts`)
 - Zustand Store 管理应用状态
-- 状态包括：`todayAchievements`, `allAchievements`, `recordedDates`
+- 状态包括：`todayAchievements`, `allAchievements`, `recordedDates`, `selectedDate`
 - 方法自动同步到 IndexedDB 并刷新相关状态
+- 支持按指定日期添加记录（`addAchievementWithDate`）
 
 ### 3. 页面层 (`src/app/(app)/`)
 - `layout.tsx` - 根布局，包含底部三栏导航（今日/日历/全部）
-- `today/page.tsx` - 今日成就记录，支持增删改
+- `today/page.tsx` - 今日成就记录，支持日期选择、增删改
 - `calendar/page.tsx` - 日历回顾，高亮有记录的日期
 - `all/page.tsx` - 全部记录时间线，支持搜索
 
@@ -68,14 +69,14 @@ npm run lint
  * Output: 文件对外提供的内容
  * Position: 文件在系统局部架构中的地位
  *
- * 更新规范: 一旦本文件被更新，务必更新开头的注释，以及所属文件夹的 README.md 文件
+ * 更新规范: 一旦本文件被更新，务必更新开头的注释，以及所属文件夹的 CLAUDE.md 文件
  */
 ```
 
-### 文件夹 README 规范
+### 文件夹 CLAUDE 规范
 - 每个文件夹维护极简架构说明（3行以内）
 - 列出每个文件的名称、地位、功能
-- 文件夹内容变化时必须更新对应的 README.md
+- 文件夹内容变化时必须更新对应的 CLAUDE.md
 
 ### 通用规则
 - 所有文件使用中文注释
@@ -93,7 +94,7 @@ npm run lint
 ## 功能优先级
 
 根据 `docs/PRD.md`：
-- **P0**: 今日成就记录（已完成）
+- **P0**: 今日成就记录、日期选择功能（已完成）
 - **P1**: 日历视图、全部记录列表（已完成）
 - **P2**: 搜索功能、数据导出、暗色模式（部分完成）
 - **P3**: 云端同步、数据统计图表（规划中）
@@ -106,15 +107,24 @@ npx shadcn@latest add <component-name>
 ```
 
 ### 日期处理
+
+@src/lib/utils.ts
 ```typescript
 import { format, isToday } from 'date-fns'
 import { zhCN } from 'date-fns/locale/zh-CN'
+import { formatDateToLocal } from '@/lib/utils'
+
+// 本地日期格式化（避免时区问题）
+formatDateToLocal(new Date())  // => '2025-12-29'
 
 // 格式化日期
 format(new Date(), 'yyyy-MM-dd')
 
 // 中文日期显示
 format(date, 'yyyy年M月d日', { locale: zhCN })
+
+// 判断是否为今天
+isToday(new Date())
 ```
 
 ### 数据库操作
