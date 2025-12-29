@@ -8,7 +8,10 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { format, isToday } from 'date-fns'
+import { zhCN } from 'date-fns/locale/zh-CN'
+import { toast } from 'sonner'
 import { useAchievementStore } from '@/stores/achievement'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -16,15 +19,34 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Plus, Trash2, Edit2, CheckCircle2 } from 'lucide-react'
 import { RecordTypeSelector } from '@/components/feature/RecordTypeSelector'
 import { TypeCard } from '@/components/feature/TypeCard'
+import { DatePickerButton } from '@/components/feature/DatePickerButton'
 import { RECORD_TYPES } from '@/lib/db'
 
 const TARGET_COUNT = 3
 
 export default function TodayPage() {
-  const { todayAchievements, currentType, typeStats, loadTodayAchievements, addAchievement, deleteAchievement, updateAchievement, setCurrentType } = useAchievementStore()
+  const {
+    todayAchievements,
+    currentType,
+    typeStats,
+    selectedDate,
+    loadTodayAchievements,
+    addAchievementWithDate,
+    deleteAchievement,
+    updateAchievement,
+    setCurrentType,
+    setSelectedDate,
+  } = useAchievementStore()
   const [input, setInput] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState('')
+
+  // 计算今天的日期
+  const today = useMemo(() => new Date().toISOString().split('T')[0], [])
+  const isSelectingToday = isToday(new Date(selectedDate))
+  const displayDate = useMemo(() => {
+    return format(new Date(selectedDate), 'yyyy年MM月dd日', { locale: zhCN })
+  }, [selectedDate])
 
   useEffect(() => {
     loadTodayAchievements()
@@ -33,8 +55,15 @@ export default function TodayPage() {
   const handleAdd = async () => {
     const content = input.trim()
     if (!content) return
-    await addAchievement(content)
+    await addAchievementWithDate(content, selectedDate)
     setInput('')
+
+    // 成功反馈
+    const typeLabel = RECORD_TYPES[currentType].label
+    const dateText = isSelectingToday ? '今天' : displayDate
+    toast.success(`已添加到${dateText}的${typeLabel}`, {
+      description: content.length > 20 ? content.substring(0, 20) + '...' : content,
+    })
   }
 
   const handleDelete = async (id: string) => {
@@ -88,22 +117,28 @@ export default function TodayPage() {
         </p>
       </div>
 
-      {/* 类型选择器 + 输入区域 */}
-      <TypeCard type={currentType} className="mb-6" contentProps={{ className: 'pt-6' }}>
-        {/* 类型选择器 */}
-        <div className="mb-4">
-          <RecordTypeSelector
-            value={currentType}
-            onChange={setCurrentType}
+      {/* 类型选择器 + 日期选择 + 输入区域 */}
+      <TypeCard type={currentType} className="mb-6" contentProps={{ className: 'pt-0' }}>
+        {/* 类型选择器 + 日期选择器 */}
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex-1">
+            <RecordTypeSelector
+              value={currentType}
+              onChange={setCurrentType}
+            />
+          </div>
+          <DatePickerButton
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
           />
-          <p className="text-xs text-muted-foreground mt-2 text-center">
-            {currentTypeConfig.description}
-          </p>
         </div>
+        <p className="text-xs text-muted-foreground mb-4 text-center">
+          {currentTypeConfig.description}
+        </p>
 
         {/* 输入框 */}
         <Textarea
-          placeholder={`记录今天的${currentTypeConfig.label}...`}
+          placeholder={`记录${isSelectingToday ? '今天' : displayDate}的${currentTypeConfig.label}...`}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
@@ -131,7 +166,7 @@ export default function TodayPage() {
       <div className="space-y-3">
         {todayAchievements.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            <p>今天还没有记录</p>
+            <p>{isSelectingToday ? '今天还没有记录' : `${displayDate} 还没有记录`}</p>
             <p className="text-sm mt-1">开始记录你的第一条{currentTypeConfig.label}吧！</p>
           </div>
         ) : (
