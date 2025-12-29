@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-DailyMemento 是一款基于 Next.js 的 PWA 应用，帮助用户记录每日生活中的小成就。
+BobaMoment 是一款基于 Next.js 的 PWA 应用，帮助用户记录每日生活中的小成就。
 
 ## 开发命令
 
@@ -43,7 +43,7 @@ npm run lint
 
 ### 1. 数据持久化层 (`src/lib/db.ts`)
 - 使用 Dexie.js 封装 IndexedDB 操作
-- 数据库名：`DailyMementoDB`
+- 数据库名：`BobaMomentDB`
 - 成就表结构：`id, date, content, createdAt, updatedAt`
 - 提供 `achievementDb` 辅助函数集合（增删改查、搜索、日期列表）
 

@@ -1,4 +1,4 @@
-# DailyMemento 技术选型文档
+# BobaMoment 技术选型文档
 
 ## 一、技术栈总览
 
@@ -103,18 +103,18 @@ interface AchievementStore {
 // db.ts
 import Dexie from 'dexie'
 
-class DailyMementoDB extends Dexie {
+class BobaMomentDB extends Dexie {
   achievements!: Table<Achievement>
 
   constructor() {
-    super('DailyMementoDB')
+    super('BobaMomentDB')
     this.version(1).stores({
       achievements: 'id, date, content, createdAt'
     })
   }
 }
 
-export const db = new DailyMementoDB()
+export const db = new BobaMomentDB()
 ```
 
 ---
@@ -122,7 +122,7 @@ export const db = new DailyMementoDB()
 ## 三、项目结构
 
 ```
-DailyMemento/
+BobaMoment/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── (app)/              # 应用布局组
@@ -162,7 +162,7 @@ DailyMemento/
 ```json
 // public/manifest.json
 {
-  "name": "DailyMemento",
+  "name": "BobaMoment",
   "short_name": "每日成就",
   "description": "记录每日小成就",
   "start_url": "/",

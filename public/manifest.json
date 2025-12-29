@@ -1,5 +1,5 @@
 {
-  "name": "DailyMemento",
+  "name": "BobaMoment",
   "short_name": "每日成就",
   "description": "记录每日小成就，培养积极生活态度",
   "start_url": "/today",

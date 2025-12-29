@@ -20,14 +20,14 @@ export interface Achievement {
 }
 
 /**
- * DailyMemento 数据库
+ * BobaMoment 数据库
  * 单例模式，整个应用共享一个实例
  */
-class DailyMementoDB extends Dexie {
+class BobaMomentDB extends Dexie {
   achievements!: Table<Achievement, string>
 
   constructor() {
-    super('DailyMementoDB')
+    super('BobaMomentDB')
 
     // 定义数据库版本和表结构
     this.version(1).stores({
@@ -38,7 +38,7 @@ class DailyMementoDB extends Dexie {
 }
 
 // 导出数据库单例
-export const db = new DailyMementoDB()
+export const db = new BobaMomentDB()
 
 /**
  * 数据库操作辅助函数

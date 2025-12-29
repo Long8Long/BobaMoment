@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DailyMemento - 每日小成就",
+  title: "BobaMoment - 每日小成就",
   description: "记录每日小成就，培养积极生活态度",
   manifest: "/manifest.json",
   appleWebApp: {
@@ -50,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/BobaMomentLogo.png" sizes="any" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body
