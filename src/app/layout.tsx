@@ -22,8 +22,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BobaMoment - 每日小成就",
-  description: "记录每日小成就，培养积极生活态度",
+  title: "BobaMoment - 珍珠时刻",
+  description: "记录珍珠时刻，培养积极生活态度",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

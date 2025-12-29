@@ -164,7 +164,7 @@ BobaMoment/
 {
   "name": "BobaMoment",
   "short_name": "每日成就",
-  "description": "记录每日小成就",
+  "description": "记录珍珠时刻",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

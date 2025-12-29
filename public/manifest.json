@@ -1,7 +1,7 @@
 {
   "name": "BobaMoment",
   "short_name": "每日成就",
-  "description": "记录每日小成就，培养积极生活态度",
+  "description": "记录珍珠时刻，培养积极生活态度",
   "start_url": "/today",
   "display": "standalone",
   "background_color": "#ffffff",
