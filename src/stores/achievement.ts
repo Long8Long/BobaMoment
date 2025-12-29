@@ -7,7 +7,7 @@
  */
 
 import { create } from 'zustand'
-import { achievementDb, type Achievement } from '@/lib/db'
+import { achievementDb, type Achievement, type RecordType } from '@/lib/db'
 
 interface AchievementState {
   // 状态
@@ -16,15 +16,23 @@ interface AchievementState {
   recordedDates: string[]
   isLoading: boolean
   error: string | null
+  currentType: RecordType           // 当前选择的记录类型
+  typeStats: {                      // 类型统计
+    achievement: number
+    gratitude: number
+  }
 
   // 操作方法
   loadTodayAchievements: () => Promise<void>
   loadAllAchievements: () => Promise<void>
   loadRecordedDates: () => Promise<void>
-  addAchievement: (content: string) => Promise<void>
+  addAchievement: (content: string, type?: RecordType) => Promise<void>
   updateAchievement: (id: string, content: string) => Promise<void>
   deleteAchievement: (id: string) => Promise<void>
   searchAchievements: (keyword: string) => Promise<Achievement[]>
+  setCurrentType: (type: RecordType) => void
+  loadTypeStats: () => Promise<void>
+  updateAchievementType: (id: string, type: RecordType) => Promise<void>
 }
 
 export const useAchievementStore = create<AchievementState>((set, get) => ({
@@ -34,6 +42,8 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   recordedDates: [],
   isLoading: false,
   error: null,
+  currentType: 'achievement',
+  typeStats: { achievement: 0, gratitude: 0 },
 
   // 加载今日成就
   loadTodayAchievements: async () => {
@@ -41,7 +51,9 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
     try {
       const achievements = await achievementDb.getToday()
       set({ todayAchievements: achievements, isLoading: false })
-    } catch (error) {
+      // 加载类型统计
+      await get().loadTypeStats()
+    } catch {
       set({ error: '加载今日成就失败', isLoading: false })
     }
   },
@@ -52,7 +64,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
     try {
       const achievements = await achievementDb.getAll()
       set({ allAchievements: achievements, isLoading: false })
-    } catch (error) {
+    } catch {
       set({ error: '加载历史记录失败', isLoading: false })
     }
   },
@@ -62,22 +74,23 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
     try {
       const dates = await achievementDb.getRecordedDates()
       set({ recordedDates: dates })
-    } catch (error) {
+    } catch {
       set({ error: '加载日期记录失败' })
     }
   },
 
   // 添加成就
-  addAchievement: async (content: string) => {
+  addAchievement: async (content: string, type?: RecordType) => {
     set({ isLoading: true, error: null })
     try {
       const today = new Date().toISOString().split('T')[0]
-      await achievementDb.add(content, today)
+      const recordType = type || get().currentType
+      await achievementDb.add(content, today, recordType)
       // 刷新今日成就
       await get().loadTodayAchievements()
       // 刷新日期列表
       await get().loadRecordedDates()
-    } catch (error) {
+    } catch {
       set({ error: '添加成就失败', isLoading: false })
     }
   },
@@ -88,7 +101,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
     try {
       await achievementDb.update(id, content)
       await get().loadTodayAchievements()
-    } catch (error) {
+    } catch {
       set({ error: '更新成就失败', isLoading: false })
     }
   },
@@ -100,7 +113,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
       await achievementDb.delete(id)
       await get().loadTodayAchievements()
       await get().loadRecordedDates()
-    } catch (error) {
+    } catch {
       set({ error: '删除成就失败', isLoading: false })
     }
   },
@@ -109,9 +122,40 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   searchAchievements: async (keyword: string) => {
     try {
       return await achievementDb.search(keyword)
-    } catch (error) {
+    } catch {
       set({ error: '搜索失败' })
       return []
+    }
+  },
+
+  // 设置当前类型
+  setCurrentType: (type: RecordType) => {
+    set({ currentType: type })
+  },
+
+  // 加载类型统计
+  loadTypeStats: async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const achievements = await achievementDb.getByDate(today)
+      const stats = {
+        achievement: achievements.filter(a => (a.type || 'achievement') === 'achievement').length,
+        gratitude: achievements.filter(a => a.type === 'gratitude').length,
+      }
+      set({ typeStats: stats })
+    } catch {
+      set({ error: '加载统计失败' })
+    }
+  },
+
+  // 更新成就类型
+  updateAchievementType: async (id: string, type: RecordType) => {
+    set({ isLoading: true, error: null })
+    try {
+      await achievementDb.updateType(id, type)
+      await get().loadTodayAchievements()
+    } catch {
+      set({ error: '更新类型失败', isLoading: false })
     }
   },
 }))
