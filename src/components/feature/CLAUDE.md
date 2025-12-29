@@ -4,6 +4,7 @@
 
 - `RecordTypeSelector.tsx` - 记录类型选择器组件
 - `TypeCard.tsx` - 带圆角的卡片组件
+- `DatePickerButton.tsx` - 日期选择器组件（滚轮选择器）
 
 ---
 
