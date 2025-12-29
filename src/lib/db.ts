@@ -20,7 +20,7 @@ export type RecordType = 'achievement' | 'gratitude'
 export const RECORD_TYPES = {
   achievement: {
     label: '成就',
-    description: '记录今天的小成就',
+    description: '记录小成就',
     icon: Trophy,
     color: '#D2691E', // 巧克力橘 - 明亮系
   },
