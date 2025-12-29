@@ -7,7 +7,7 @@
  */
 
 import Link from 'next/link'
-import { PenTool, Calendar, List, Info } from 'lucide-react'
+import { PenTool, Calendar, List, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function AppLayout({
@@ -25,7 +25,7 @@ export default function AppLayout({
           <NavLink href="/today" icon={<PenTool className="h-5 w-5" />} label="今日" />
           <NavLink href="/calendar" icon={<Calendar className="h-5 w-5" />} label="日历" />
           <NavLink href="/all" icon={<List className="h-5 w-5" />} label="全部" />
-          <NavLink href="/about" icon={<Info className="h-5 w-5" />} label="关于" />
+          <NavLink href="/settings" icon={<Settings className="h-5 w-5" />} label="设置" />
         </div>
       </nav>
     </div>
