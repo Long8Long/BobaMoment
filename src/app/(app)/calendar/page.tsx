@@ -11,7 +11,7 @@
 import { useEffect, useState } from 'react'
 import { useAchievementStore } from '@/stores/achievement'
 import { Calendar } from '@/components/ui/calendar'
-import { Card, CardContent } from '@/components/ui/card'
+import { TypeCard } from '@/components/feature/TypeCard'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { zhCN } from 'date-fns/locale/zh-CN'
@@ -92,31 +92,27 @@ export default function CalendarPage() {
             selectedAchievements.map((achievement) => {
               const typeConfig = RECORD_TYPES[achievement.type || 'achievement']
               return (
-                <Card
+                <TypeCard
                   key={achievement.id}
-                  style={{
-                    borderLeftWidth: '4px',
-                    borderLeftColor: typeConfig.color
-                  }}
+                  type={achievement.type || 'achievement'}
+                  contentProps={{ className: 'pt-4' }}
                 >
-                  <CardContent className="pt-4">
-                    <div className="flex gap-2">
-                      <typeConfig.icon className="h-4 w-4 shrink-0 mt-0.5" style={{ color: typeConfig.color }} />
-                      <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      <Badge variant="outline" className="text-xs" style={{ borderColor: typeConfig.color, color: typeConfig.color }}>
-                        {typeConfig.label}
-                      </Badge>
-                      <Badge variant="outline" className="text-xs">
-                        {new Date(achievement.createdAt).toLocaleTimeString('zh-CN', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
+                  <div className="flex gap-2">
+                    <typeConfig.icon className="h-4 w-4 shrink-0 mt-0.5" style={{ color: typeConfig.color }} />
+                    <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    <Badge variant="outline" className="text-xs" style={{ borderColor: typeConfig.color, color: typeConfig.color }}>
+                      {typeConfig.label}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {new Date(achievement.createdAt).toLocaleTimeString('zh-CN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </Badge>
+                  </div>
+                </TypeCard>
               )
             })
           )}
