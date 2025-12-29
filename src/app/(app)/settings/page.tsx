@@ -122,7 +122,7 @@ export default function SettingsPage() {
   return (
     <div className="container max-w-md space-y-6 px-4 py-8">
       {/* 数据管理 */}
-      <Card>
+      <Card className="rounded-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
@@ -167,7 +167,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* 应用简介 */}
-      <Card>
+      <Card className="rounded-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
@@ -191,7 +191,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* 作者简介 */}
-      <Card>
+      <Card className="rounded-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
@@ -211,7 +211,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* 联系方式 */}
-      <Card>
+      <Card className="rounded-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
@@ -252,7 +252,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* 打赏区域 */}
-      <Card>
+      <Card className="rounded-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
@@ -306,7 +306,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* 版本信息 */}
-      <Card>
+      <Card className="rounded-md">
         <CardContent className="py-6 text-center">
           <p className="text-sm text-muted-foreground">
             BobaMoment v1.0.0
