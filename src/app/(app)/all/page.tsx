@@ -20,18 +20,6 @@ import { format, isToday } from 'date-fns'
 import { zhCN } from 'date-fns/locale/zh-CN'
 import { achievementDb, type Achievement, RECORD_TYPES } from '@/lib/db'
 
-// P2功能：搜索
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const searchAchievements = async (keyword: string): Promise<Achievement[]> => {
-  // TODO: 实现搜索功能
-  return []
-}
-
-// P2功能：导出
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const exportData = () => {
-  // TODO: 实现导出功能
-}
 
 export default function AllPage() {
   const { allAchievements, loadAllAchievements, deleteAchievement } = useAchievementStore()
@@ -95,7 +83,7 @@ export default function AllPage() {
 
       {/* 搜索栏（P2功能，基础实现） */}
       <Card className="mb-6 rounded-md">
-        <CardContent className="pt-4">
+        <CardContent className="pt-0">
           <div className="flex gap-2">
             <Input
               placeholder="搜索内容..."
@@ -170,9 +158,6 @@ export default function AllPage() {
           ))
         )}
       </div>
-
-      {/* 导出按钮（P2功能，暂留空） */}
-      {/* TODO: 实现数据导出 */}
     </div>
   )
 }
