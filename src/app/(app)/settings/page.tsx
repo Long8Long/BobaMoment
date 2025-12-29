@@ -1,19 +1,171 @@
 /**
  * Input: 无外部输入
- * Output: 关于页面内容
- * Position: 应用关于页，展示应用信息和打赏区域
+ * Output: 设置页面内容
+ * Position: 应用设置页，提供数据管理、应用信息和打赏功能
  *
  * 更新规范: 一旦本文件被更新，务必更新开头的注释，以及所属文件夹的 README.md 文件
  */
 
-import { Sparkles, Heart, Coffee, Github, Mail, Link as LinkIcon } from 'lucide-react'
+'use client'
+
+import { useState } from 'react'
+import { Sparkles, Heart, Coffee, Github, Mail, Link as LinkIcon, Download, Upload, Database, AlertCircle } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 import Link from 'next/link'
 import Image from 'next/image'
+import { db } from '@/lib/db'
 
-export default function AboutPage() {
+export default function SettingsPage() {
+  const [isExporting, setIsExporting] = useState(false)
+  const [isImporting, setIsImporting] = useState(false)
+
+  // 导出数据
+  const handleExport = async () => {
+    try {
+      setIsExporting(true)
+      const achievements = await db.achievements.toArray()
+
+      const exportData = {
+        version: '1.0.0',
+        exportDate: new Date().toISOString(),
+        count: achievements.length,
+        data: achievements,
+      }
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: 'application/json',
+      })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `bobamoment-backup-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+
+      toast.success(`导出成功`, {
+        description: `已导出 ${achievements.length} 条成就记录`,
+      })
+    } catch (error) {
+      console.error('导出失败:', error)
+      toast.error('导出失败', {
+        description: '导出数据时发生错误，请重试',
+      })
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  // 导入数据
+  const handleImport = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'application/json'
+
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (!file) return
+
+      try {
+        setIsImporting(true)
+        const text = await file.text()
+        const importData = JSON.parse(text)
+
+        // 验证数据格式
+        if (!importData.data || !Array.isArray(importData.data)) {
+          throw new Error('数据格式不正确')
+        }
+
+        // 导入数据
+        let importedCount = 0
+        let skippedCount = 0
+
+        for (const achievement of importData.data) {
+          if (!achievement.id || !achievement.content || !achievement.date) {
+            skippedCount++
+            continue
+          }
+
+          // 检查是否已存在
+          const existing = await db.achievements.get(achievement.id)
+          if (existing) {
+            skippedCount++
+            continue
+          }
+
+          await db.achievements.add(achievement)
+          importedCount++
+        }
+
+        // 刷新页面以更新状态
+        window.location.reload()
+
+        toast.success('导入成功', {
+          description: `已导入 ${importedCount} 条记录${skippedCount > 0 ? `，跳过 ${skippedCount} 条重复或无效记录` : ''}`,
+        })
+      } catch (error) {
+        console.error('导入失败:', error)
+        toast.error('导入失败', {
+          description: error instanceof Error ? error.message : '导入数据时发生错误',
+        })
+      } finally {
+        setIsImporting(false)
+      }
+    }
+
+    input.click()
+  }
+
   return (
     <div className="container max-w-md space-y-6 px-4 py-8">
+      {/* 数据管理 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
+              <Database className="h-5 w-5 text-primary" />
+            </div>
+            数据管理
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            数据保存在浏览器本地，定期导出备份可以防止数据丢失。换设备时可以通过导入功能恢复数据。
+          </p>
+
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={handleExport}
+              disabled={isExporting}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              {isExporting ? '导出中...' : '导出数据'}
+            </Button>
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={handleImport}
+              disabled={isImporting}
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              {isImporting ? '导入中...' : '导入数据'}
+            </Button>
+          </div>
+
+          <div className="flex items-start gap-2 rounded-lg border border-amber-200/50 bg-amber-50/50 p-3 dark:border-amber-900/50 dark:bg-amber-950/50">
+            <AlertCircle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-500 mt-0.5" />
+            <p className="text-xs text-amber-700 dark:text-amber-400">
+              导入数据会合并现有记录，不会覆盖已有数据。
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* 应用简介 */}
       <Card>
         <CardHeader>
