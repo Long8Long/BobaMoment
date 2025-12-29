@@ -21,16 +21,19 @@ interface AchievementState {
     achievement: number
     gratitude: number
   }
+  selectedDate: string              // 当前选择的日期（用于添加历史记录）
 
   // 操作方法
   loadTodayAchievements: () => Promise<void>
   loadAllAchievements: () => Promise<void>
   loadRecordedDates: () => Promise<void>
   addAchievement: (content: string, type?: RecordType) => Promise<void>
+  addAchievementWithDate: (content: string, date: string, type?: RecordType) => Promise<void>
   updateAchievement: (id: string, content: string) => Promise<void>
   deleteAchievement: (id: string) => Promise<void>
   searchAchievements: (keyword: string) => Promise<Achievement[]>
   setCurrentType: (type: RecordType) => void
+  setSelectedDate: (date: string) => void
   loadTypeStats: () => Promise<void>
   updateAchievementType: (id: string, type: RecordType) => Promise<void>
 }
@@ -44,6 +47,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   error: null,
   currentType: 'achievement',
   typeStats: { achievement: 0, gratitude: 0 },
+  selectedDate: new Date().toISOString().split('T')[0], // 默认今天
 
   // 加载今日成就
   loadTodayAchievements: async () => {
@@ -95,6 +99,24 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
     }
   },
 
+  // 为指定日期添加成就
+  addAchievementWithDate: async (content: string, date: string, type?: RecordType) => {
+    set({ isLoading: true, error: null })
+    try {
+      const recordType = type || get().currentType
+      await achievementDb.add(content, date, recordType)
+      // 如果是今天，刷新今日成就
+      const today = new Date().toISOString().split('T')[0]
+      if (date === today) {
+        await get().loadTodayAchievements()
+      }
+      // 总是刷新日期列表
+      await get().loadRecordedDates()
+    } catch {
+      set({ error: '添加记录失败', isLoading: false })
+    }
+  },
+
   // 更新成就
   updateAchievement: async (id: string, content: string) => {
     set({ isLoading: true, error: null })
@@ -131,6 +153,11 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   // 设置当前类型
   setCurrentType: (type: RecordType) => {
     set({ currentType: type })
+  },
+
+  // 设置当前选择的日期
+  setSelectedDate: (date: string) => {
+    set({ selectedDate: date })
   },
 
   // 加载类型统计
