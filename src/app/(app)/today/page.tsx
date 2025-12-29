@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
 import { Plus, Trash2, Edit2, CheckCircle2 } from 'lucide-react'
 import { RecordTypeSelector } from '@/components/feature/RecordTypeSelector'
+import { TypeCard } from '@/components/feature/TypeCard'
 import { RECORD_TYPES } from '@/lib/db'
 
 const TARGET_COUNT = 3
@@ -87,9 +88,10 @@ export default function TodayPage() {
         </p>
       </div>
 
-      {/* 类型选择器 */}
-      <Card className="mb-4">
-        <CardContent className="pt-4">
+      {/* 类型选择器 + 输入区域 */}
+      <TypeCard type={currentType} className="mb-6" contentProps={{ className: 'pt-6' }}>
+        {/* 类型选择器 */}
+        <div className="mb-4">
           <RecordTypeSelector
             value={currentType}
             onChange={setCurrentType}
@@ -97,43 +99,33 @@ export default function TodayPage() {
           <p className="text-xs text-muted-foreground mt-2 text-center">
             {currentTypeConfig.description}
           </p>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* 输入区域 - 添加类型主题色边框 */}
-      <Card
-        className="mb-6"
-        style={{
-          borderLeftWidth: '4px',
-          borderLeftColor: currentTypeConfig.color
-        }}
-      >
-        <CardContent className="pt-6">
-          <Textarea
-            placeholder={`记录今天的${currentTypeConfig.label}...`}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                handleAdd()
-              }
-            }}
-            rows={3}
-            maxLength={200}
-            className="resize-none"
-          />
-          <div className="flex justify-between items-center mt-3">
-            <span className="text-xs text-muted-foreground">
-              {input.length}/200
-            </span>
-            <Button onClick={handleAdd} size="sm" disabled={!input.trim()}>
-              <Plus className="h-4 w-4 mr-1" />
-              添加
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        {/* 输入框 */}
+        <Textarea
+          placeholder={`记录今天的${currentTypeConfig.label}...`}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              handleAdd()
+            }
+          }}
+          rows={3}
+          maxLength={200}
+          className="resize-none"
+        />
+        <div className="flex justify-between items-center mt-3">
+          <span className="text-xs text-muted-foreground">
+            {input.length}/200
+          </span>
+          <Button onClick={handleAdd} size="sm" disabled={!input.trim()}>
+            <Plus className="h-4 w-4 mr-1" />
+            添加
+          </Button>
+        </div>
+      </TypeCard>
 
       {/* 记录列表 - 根据类型显示不同样式 */}
       <div className="space-y-3">
@@ -146,15 +138,12 @@ export default function TodayPage() {
           todayAchievements.map((achievement) => {
             const typeConfig = RECORD_TYPES[achievement.type || 'achievement']
             return (
-              <Card
+              <TypeCard
                 key={achievement.id}
-                style={{
-                  borderLeftWidth: '4px',
-                  borderLeftColor: typeConfig.color
-                }}
+                type={achievement.type || 'achievement'}
+                contentProps={{ className: 'pt-4' }}
               >
-                <CardContent className="pt-4">
-                  {editingId === achievement.id ? (
+                {editingId === achievement.id ? (
                     <div className="space-y-2">
                       <Textarea
                         value={editContent}
@@ -174,7 +163,10 @@ export default function TodayPage() {
                     </div>
                   ) : (
                     <div className="flex gap-2">
-                      <typeConfig.icon className="h-4 w-4 shrink-0 mt-0.5" style={{ color: typeConfig.color }} />
+                      <typeConfig.icon
+                        className="h-4 w-4 shrink-0 mt-0.5"
+                        style={{ color: typeConfig.color }}
+                      />
                       <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
                       <div className="flex gap-1">
                         <Button
@@ -196,8 +188,7 @@ export default function TodayPage() {
                       </div>
                     </div>
                   )}
-                </CardContent>
-              </Card>
+              </TypeCard>
             )
           })
         )}
