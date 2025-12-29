@@ -164,7 +164,7 @@ export const achievementDb = {
   },
 
   /**
-   * 搜索成就内容
+   * 搜索内容
    */
   async search(keyword: string): Promise<Achievement[]> {
     const all = await db.achievements.toArray()
