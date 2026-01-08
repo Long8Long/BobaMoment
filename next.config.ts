@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   // 兼容 Turbopack
   turbopack: {},
+  // 静态导出配置
+  output: 'export',
+  // 图片优化在静态导出时禁用
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default withPWA({
