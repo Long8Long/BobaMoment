@@ -9,7 +9,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Sparkles, Heart, Coffee, Github, Mail, Link as LinkIcon, Download, Upload, Database, AlertCircle } from 'lucide-react'
+import { Sparkles, Heart, Coffee, Github, Mail, Link as LinkIcon, Download, Upload, Database, AlertCircle, MessageSquare } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
@@ -163,6 +163,28 @@ export default function SettingsPage() {
               导入数据会合并现有记录，不会覆盖已有数据。
             </p>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* 自定义轮播信息 */}
+      <Card className="rounded-md">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
+              <MessageSquare className="h-5 w-5 text-primary" />
+            </div>
+            自定义轮播信息
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            自定义首页显示的激励语和情绪建议，让轮播内容更符合你的个人风格。
+          </p>
+          <Link href="/settings/quotes">
+            <Button variant="outline" className="w-full">
+              管理轮播信息
+            </Button>
+          </Link>
         </CardContent>
       </Card>
 

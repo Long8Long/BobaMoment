@@ -1,47 +1,50 @@
 /**
- * Input: 无（独立组件）
+ * Input: useQuoteStore (语录状态管理)
  * Output: 轮播信息条组件
- * Position: 功能组件，展示激励语和情绪建议
+ * Position: 功能组件，展示激励语和情绪建议（从数据库读取）
  *
  * 更新规范: 一旦本文件被更新，务必更新开头的注释，以及所属文件夹的 CLAUDE.md 文件
  */
 
 'use client'
 
+import { useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  type CarouselApi,
 } from '@/components/ui/carousel'
 import Autoplay from 'embla-carousel-autoplay'
-import { useRef, useEffect } from 'react'
-
-// 5条正能量激励语
-const MOTIVATION_QUOTES = [
-  '每一个小成就都值得被庆祝',
-  '你已经比昨天的自己更好了',
-  '坚持下去，惊喜正在路上',
-  '今天的努力是明天的收获',
-  '相信自己，你比想象中更强大',
-]
-
-// 5条疏解情绪建议
-const EMOTION_TIPS = [
-  '深呼吸三次，让心灵平静下来',
-  '出去走走，换个环境换个心情',
-  '写下你的感受，情绪会慢慢平复',
-  '给自己一杯茶的时间，静静思考',
-  '记住，所有情绪都是暂时的',
-]
-
-const ALL_QUOTES = [...MOTIVATION_QUOTES, ...EMOTION_TIPS]
+import { useRef } from 'react'
+import { useQuoteStore } from '@/stores/quote'
+import { Loader2 } from 'lucide-react'
 
 export function MotivationCarousel() {
   const plugin = useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true })
   )
+
+  const { motivationQuotes, emotionTips, loadQuotes, isLoading } = useQuoteStore()
+
+  useEffect(() => {
+    loadQuotes()
+  }, [loadQuotes])
+
+  // 合并语录：激励语在前，情绪建议在后
+  const allQuotes = [...motivationQuotes, ...emotionTips]
+
+  // 加载状态
+  if (isLoading || allQuotes.length === 0) {
+    return (
+      <div className="mb-6 flex items-center justify-center rounded-lg border border-dashed p-8">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  // 计算分割点
+  const motivationCount = motivationQuotes.length
 
   return (
     <div className="mb-6">
@@ -54,8 +57,8 @@ export function MotivationCarousel() {
         }}
       >
         <CarouselContent>
-          {ALL_QUOTES.map((quote, index) => {
-            const isMotivation = index < MOTIVATION_QUOTES.length
+          {allQuotes.map((quote, index) => {
+            const isMotivation = index < motivationCount
             const bgGradient = isMotivation
               ? 'from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30'
               : 'from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30'
@@ -67,7 +70,7 @@ export function MotivationCarousel() {
               : 'text-blue-900 dark:text-blue-100'
 
             return (
-              <CarouselItem key={index}>
+              <CarouselItem key={quote.id}>
                 <div
                   className={cn(
                     'bg-gradient-to-r rounded-lg p-4 border',
@@ -76,7 +79,7 @@ export function MotivationCarousel() {
                   )}
                 >
                   <p className={cn('text-sm leading-relaxed text-center', textClass)}>
-                    {quote}
+                    {quote.content}
                   </p>
                 </div>
               </CarouselItem>

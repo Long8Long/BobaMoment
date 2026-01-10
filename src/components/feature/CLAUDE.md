@@ -5,7 +5,7 @@
 - `RecordTypeSelector.tsx` - 记录类型选择器组件（三栏：成就/感念/情绪）
 - `TypeCard.tsx` - 带圆角的卡片组件
 - `DatePickerButton.tsx` - 日期选择器组件（滚轮选择器）
-- `MotivationCarousel.tsx` - 轮播信息条组件（5条正能量激励语 + 5条疏解情绪建议）
+- `MotivationCarousel.tsx` - 轮播信息条组件（从数据库读取激励语和情绪建议）
 - `EmotionSubtypeSelector.tsx` - 情绪子类型选择器组件（10种情绪按钮网格）
 
 ---
