@@ -16,7 +16,6 @@ import { useAchievementStore } from '@/stores/achievement'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import { Plus, Trash2, Edit2, CheckCircle2 } from 'lucide-react'
 import { RecordTypeSelector } from '@/components/feature/RecordTypeSelector'
 import { TypeCard } from '@/components/feature/TypeCard'
@@ -112,8 +111,6 @@ export default function TodayPage() {
             <RECORD_TYPES.gratitude.icon className="h-4 w-4" style={{ color: RECORD_TYPES.gratitude.color }} />
             <span className="text-sm">{typeStats.gratitude} 感念</span>
           </div>
-        </div>
-        <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <RECORD_TYPES.emotion.icon className="h-4 w-4" style={{ color: RECORD_TYPES.emotion.color }} />
             <span className="text-sm">{typeStats.emotion} 情绪</span>
