@@ -20,6 +20,9 @@ npm start
 
 # Lint检查
 npm run lint
+
+# 部署到腾讯云
+tcb hosting deploy out -e boba-moment-7gotx9f38e25ea4e
 ```
 
 ## 技术栈与配置
