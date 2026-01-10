@@ -27,8 +27,8 @@ const typeCardVariants = cva('', {
 })
 
 export interface TypeCardProps extends Omit<React.ComponentProps<typeof Card>, 'style'> {
-  /** 记录类型 (achievement | gratitude) - 保留用于未来扩展 */
-  type?: 'achievement' | 'gratitude'
+  /** 记录类型 (achievement | gratitude | emotion) - 保留用于未来扩展 */
+  type?: 'achievement' | 'gratitude' | 'emotion'
   /** 子元素 */
   children: ReactNode
   /** CardContent 的 props */

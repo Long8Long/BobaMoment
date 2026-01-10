@@ -19,7 +19,7 @@ interface RecordTypeSelectorProps {
 export function RecordTypeSelector({ value, onChange }: RecordTypeSelectorProps) {
   return (
     <Tabs value={value} onValueChange={(v) => onChange(v as RecordType)}>
-      <TabsList className="grid w-full grid-cols-2 border-0">
+      <TabsList className="grid w-full grid-cols-3 border-0">
         <TabsTrigger value="achievement" className="gap-1.5">
           <RECORD_TYPES.achievement.icon className="h-4 w-4" />
           <span>{RECORD_TYPES.achievement.label}</span>
@@ -27,6 +27,10 @@ export function RecordTypeSelector({ value, onChange }: RecordTypeSelectorProps)
         <TabsTrigger value="gratitude" className="gap-1.5">
           <RECORD_TYPES.gratitude.icon className="h-4 w-4" />
           <span>{RECORD_TYPES.gratitude.label}</span>
+        </TabsTrigger>
+        <TabsTrigger value="emotion" className="gap-1.5">
+          <RECORD_TYPES.emotion.icon className="h-4 w-4" />
+          <span>{RECORD_TYPES.emotion.label}</span>
         </TabsTrigger>
       </TabsList>
     </Tabs>

@@ -7,12 +7,12 @@
  */
 
 import Dexie, { Table } from 'dexie'
-import { Trophy, Heart } from 'lucide-react'
+import { Trophy, Heart, Smile } from 'lucide-react'
 
 /**
  * 记录类型枚举
  */
-export type RecordType = 'achievement' | 'gratitude'
+export type RecordType = 'achievement' | 'gratitude' | 'emotion'
 
 /**
  * 记录类型配置
@@ -29,6 +29,12 @@ export const RECORD_TYPES = {
     description: '感恩的人/事',
     icon: Heart,
     color: '#6B8E23', // 深橄榄绿 - 沉稳系
+  },
+  emotion: {
+    label: '情绪',
+    description: '记录当下的心情',
+    icon: Smile,
+    color: '#9370DB', // 中紫色 - 情感系
   },
 } as const
 

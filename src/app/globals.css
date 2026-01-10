@@ -70,6 +70,8 @@
   --ring: #D2691E; /* focus 环巧克力橘 */
   /* 感念类型颜色 - 深橄榄绿 */
   --gratitude-primary: #6B8E23;
+  /* 情绪类型颜色 - 中紫色 */
+  --emotion-primary: #9370DB;
   --chart-1: #D2691E;
   --chart-2: #8C8278;
   --chart-3: #5A5048;
@@ -106,6 +108,8 @@
   --ring: oklch(0.553 0.013 58.071);
   /* 感念类型暗色模式 */
   --gratitude-primary: oklch(0.547 0.155 132.508);
+  /* 情绪类型暗色模式 */
+  --emotion-primary: oklch(0.647 0.187 298.241);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);

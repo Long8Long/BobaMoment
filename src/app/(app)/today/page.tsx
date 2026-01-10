@@ -105,6 +105,12 @@ export default function TodayPage() {
             <span className="text-sm">{typeStats.gratitude} 感念</span>
           </div>
         </div>
+        <div className="flex gap-4 mt-1">
+          <div className="flex items-center gap-1.5">
+            <RECORD_TYPES.emotion.icon className="h-4 w-4" style={{ color: RECORD_TYPES.emotion.color }} />
+            <span className="text-sm">{typeStats.emotion} 情绪</span>
+          </div>
+        </div>
         <p className="text-muted-foreground mt-1">
           {isComplete ? (
             <span className="text-green-600 dark:text-green-400 font-medium">

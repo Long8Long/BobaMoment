@@ -20,6 +20,7 @@ interface AchievementState {
   typeStats: {                      // 类型统计
     achievement: number
     gratitude: number
+    emotion: number
   }
   selectedDate: string              // 当前选择的日期（用于添加历史记录）
 
@@ -46,7 +47,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   isLoading: false,
   error: null,
   currentType: 'achievement',
-  typeStats: { achievement: 0, gratitude: 0 },
+  typeStats: { achievement: 0, gratitude: 0, emotion: 0 },
   selectedDate: new Date().toISOString().split('T')[0], // 默认今天
 
   // 加载今日成就
@@ -168,6 +169,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
       const stats = {
         achievement: achievements.filter(a => (a.type || 'achievement') === 'achievement').length,
         gratitude: achievements.filter(a => a.type === 'gratitude').length,
+        emotion: achievements.filter(a => a.type === 'emotion').length,
       }
       set({ typeStats: stats })
     } catch {
