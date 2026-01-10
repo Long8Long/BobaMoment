@@ -86,6 +86,7 @@ tcb hosting deploy out -e boba-moment-7gotx9f38e25ea4e
 - 使用 Tailwind CSS 类名进行样式
 - 使用 `lucide-react` 图标库
 - 日期处理使用 `date-fns`，中文locale: `zhCN`
+- 新增组件时优先使用shadcn MCP查看已有组件
 
 ## PWA 相关
 

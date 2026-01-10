@@ -20,6 +20,7 @@ import { Plus, Trash2, Edit2, CheckCircle2 } from 'lucide-react'
 import { RecordTypeSelector } from '@/components/feature/RecordTypeSelector'
 import { TypeCard } from '@/components/feature/TypeCard'
 import { DatePickerButton } from '@/components/feature/DatePickerButton'
+import { MotivationCarousel } from '@/components/feature/MotivationCarousel'
 import { RECORD_TYPES } from '@/lib/db'
 
 const TARGET_COUNT = 3
@@ -92,6 +93,9 @@ export default function TodayPage() {
 
   return (
     <div className="container max-w-md mx-auto px-4 py-6">
+      {/* 轮播信息条 */}
+      <MotivationCarousel />
+
       {/* 页头 - 添加类型统计 */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold">今日记录</h1>
