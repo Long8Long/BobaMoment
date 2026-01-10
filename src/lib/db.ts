@@ -7,7 +7,11 @@
  */
 
 import Dexie, { Table } from 'dexie'
-import { Trophy, Heart, Smile } from 'lucide-react'
+import {
+  Trophy, Heart, Smile,
+  Frown, Zap, Ghost, Waves,
+  Eye, Award, HeartCrack, Sparkles, Flame
+} from 'lucide-react'
 
 /**
  * 记录类型枚举
@@ -39,13 +43,100 @@ export const RECORD_TYPES = {
 } as const
 
 /**
+ * 情绪子类型枚举
+ */
+export type EmotionSubtype =
+  | 'happy'      // 快乐
+  | 'sad'        // 悲伤
+  | 'angry'      // 愤怒
+  | 'fear'       // 恐惧
+  | 'anxiety'    // 焦虑
+  | 'jealousy'   // 嫉妒
+  | 'pride'      // 自豪
+  | 'guilt'      // 内疚
+  | 'calm'       // 平静
+  | 'irritated'  // 烦躁
+
+/**
+ * 情绪子类型配置
+ */
+export const EMOTION_SUBTYPES: Record<EmotionSubtype, {
+  label: string
+  description: string
+  icon: any
+  color: string
+}> = {
+  happy: {
+    label: '快乐',
+    description: '需求得到满足、目标达成时产生的愉悦与满足感',
+    icon: Smile,
+    color: '#F59E0B',
+  },
+  sad: {
+    label: '悲伤',
+    description: '因失去、分离或期望落空而引发的低落与伤感',
+    icon: Frown,
+    color: '#3B82F6',
+  },
+  angry: {
+    label: '愤怒',
+    description: '受到冒犯、阻碍或不公对待时的激动与不满',
+    icon: Zap,
+    color: '#EF4444',
+  },
+  fear: {
+    label: '恐惧',
+    description: '面临危险、未知或威胁时的害怕与逃避倾向',
+    icon: Ghost,
+    color: '#8B5CF6',
+  },
+  anxiety: {
+    label: '焦虑',
+    description: '对未来不确定性的持续担忧与紧张不安',
+    icon: Waves,
+    color: '#F97316',
+  },
+  jealousy: {
+    label: '嫉妒',
+    description: '因他人拥有自己渴望的事物而产生的羡慕与不甘',
+    icon: Eye,
+    color: '#EC4899',
+  },
+  pride: {
+    label: '自豪',
+    description: '因自身成就或所属群体的荣誉而产生的自我肯定与愉悦',
+    icon: Award,
+    color: '#EAB308',
+  },
+  guilt: {
+    label: '内疚',
+    description: '因伤害他人或违反道德规范而产生的自责与懊悔',
+    icon: HeartCrack,
+    color: '#64748B',
+  },
+  calm: {
+    label: '平静',
+    description: '内心没有强烈波动，处于安稳、舒缓的状态',
+    icon: Sparkles,
+    color: '#10B981',
+  },
+  irritated: {
+    label: '烦躁',
+    description: '因琐事干扰、压力累积而产生的轻微恼怒与不耐烦',
+    icon: Flame,
+    color: '#DC2626',
+  },
+}
+
+/**
  * 成就记录实体
  */
 export interface Achievement {
   id: string
   content: string          // 成就内容，1-200字
   date: string             // 日期字符串 YYYY-MM-DD
-  type: RecordType         // 记录类型：成就 | 感念
+  type: RecordType         // 记录类型：成就 | 感念 | 情绪
+  emotionSubtype?: EmotionSubtype  // 情绪子类型（仅 type='emotion' 时有效）
   createdAt: number        // 创建时间戳
   updatedAt: number        // 更新时间戳
 }
@@ -77,6 +168,12 @@ class BobaMomentDB extends Dexie {
         (achievement as Achievement & { type?: RecordType }).type = 'achievement'
       })
     })
+
+    // 版本 3：添加 emotionSubtype 索引
+    this.version(3).stores({
+      achievements: 'id, date, createdAt, type, emotionSubtype'
+    })
+    // emotionSubtype 为可选字段，无需数据迁移
   }
 }
 
@@ -90,7 +187,12 @@ export const achievementDb = {
   /**
    * 添加成就
    */
-  async add(content: string, date: string, type: RecordType = 'achievement'): Promise<Achievement> {
+  async add(
+    content: string,
+    date: string,
+    type: RecordType = 'achievement',
+    emotionSubtype?: EmotionSubtype
+  ): Promise<Achievement> {
     const id = crypto.randomUUID()
     const now = Date.now()
     const achievement: Achievement = {
@@ -98,6 +200,7 @@ export const achievementDb = {
       content: content.trim(),
       date,
       type,
+      emotionSubtype,
       createdAt: now,
       updatedAt: now,
     }

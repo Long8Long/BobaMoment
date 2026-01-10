@@ -7,7 +7,7 @@
  */
 
 import { create } from 'zustand'
-import { achievementDb, type Achievement, type RecordType } from '@/lib/db'
+import { achievementDb, type Achievement, type RecordType, type EmotionSubtype } from '@/lib/db'
 
 interface AchievementState {
   // 状态
@@ -23,6 +23,7 @@ interface AchievementState {
     emotion: number
   }
   selectedDate: string              // 当前选择的日期（用于添加历史记录）
+  currentEmotionSubtype: EmotionSubtype | null  // 当前选中的情绪子类型
 
   // 操作方法
   loadTodayAchievements: () => Promise<void>
@@ -35,6 +36,7 @@ interface AchievementState {
   searchAchievements: (keyword: string) => Promise<Achievement[]>
   setCurrentType: (type: RecordType) => void
   setSelectedDate: (date: string) => void
+  setCurrentEmotionSubtype: (subtype: EmotionSubtype | null) => void
   loadTypeStats: () => Promise<void>
   updateAchievementType: (id: string, type: RecordType) => Promise<void>
 }
@@ -49,6 +51,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   currentType: 'achievement',
   typeStats: { achievement: 0, gratitude: 0, emotion: 0 },
   selectedDate: new Date().toISOString().split('T')[0], // 默认今天
+  currentEmotionSubtype: null,  // 默认不选中任何子类型
 
   // 加载今日成就
   loadTodayAchievements: async () => {
@@ -90,11 +93,17 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
     try {
       const today = new Date().toISOString().split('T')[0]
       const recordType = type || get().currentType
-      await achievementDb.add(content, today, recordType)
+      // 如果是情绪类型，携带当前选中的子类型
+      const subtype = recordType === 'emotion' ? (get().currentEmotionSubtype ?? undefined) : undefined
+      await achievementDb.add(content, today, recordType, subtype)
       // 刷新今日成就
       await get().loadTodayAchievements()
       // 刷新日期列表
       await get().loadRecordedDates()
+      // 重置情绪子类型选择
+      if (recordType === 'emotion') {
+        set({ currentEmotionSubtype: null })
+      }
     } catch {
       set({ error: '添加成就失败', isLoading: false })
     }
@@ -105,7 +114,9 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
     set({ isLoading: true, error: null })
     try {
       const recordType = type || get().currentType
-      await achievementDb.add(content, date, recordType)
+      // 如果是情绪类型，携带当前选中的子类型
+      const subtype = recordType === 'emotion' ? (get().currentEmotionSubtype ?? undefined) : undefined
+      await achievementDb.add(content, date, recordType, subtype)
       // 如果是今天，刷新今日成就
       const today = new Date().toISOString().split('T')[0]
       if (date === today) {
@@ -113,6 +124,10 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
       }
       // 总是刷新日期列表
       await get().loadRecordedDates()
+      // 重置情绪子类型选择
+      if (recordType === 'emotion') {
+        set({ currentEmotionSubtype: null })
+      }
     } catch {
       set({ error: '添加记录失败', isLoading: false })
     }
@@ -153,12 +168,21 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
 
   // 设置当前类型
   setCurrentType: (type: RecordType) => {
-    set({ currentType: type })
+    set({
+      currentType: type,
+      // 切换类型时重置情绪子类型
+      currentEmotionSubtype: type === 'emotion' ? null : undefined
+    })
   },
 
   // 设置当前选择的日期
   setSelectedDate: (date: string) => {
     set({ selectedDate: date })
+  },
+
+  // 设置当前情绪子类型
+  setCurrentEmotionSubtype: (subtype: EmotionSubtype | null) => {
+    set({ currentEmotionSubtype: subtype })
   },
 
   // 加载类型统计

@@ -15,13 +15,15 @@ import { toast } from 'sonner'
 import { useAchievementStore } from '@/stores/achievement'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Plus, Trash2, Edit2, CheckCircle2 } from 'lucide-react'
 import { RecordTypeSelector } from '@/components/feature/RecordTypeSelector'
 import { TypeCard } from '@/components/feature/TypeCard'
 import { DatePickerButton } from '@/components/feature/DatePickerButton'
 import { MotivationCarousel } from '@/components/feature/MotivationCarousel'
-import { RECORD_TYPES } from '@/lib/db'
+import { EmotionSubtypeSelector } from '@/components/feature/EmotionSubtypeSelector'
+import { RECORD_TYPES, EMOTION_SUBTYPES } from '@/lib/db'
 
 const TARGET_COUNT = 3
 
@@ -31,12 +33,14 @@ export default function TodayPage() {
     currentType,
     typeStats,
     selectedDate,
+    currentEmotionSubtype,
     loadTodayAchievements,
     addAchievementWithDate,
     deleteAchievement,
     updateAchievement,
     setCurrentType,
     setSelectedDate,
+    setCurrentEmotionSubtype,
   } = useAchievementStore()
   const [input, setInput] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -146,9 +150,23 @@ export default function TodayPage() {
           {currentTypeConfig.description}
         </p>
 
+        {/* 情绪子类型选择器 - 仅在情绪类型时显示 */}
+        {currentType === 'emotion' && (
+          <div className="mb-4">
+            <EmotionSubtypeSelector
+              selectedSubtype={currentEmotionSubtype}
+              onSelect={setCurrentEmotionSubtype}
+            />
+          </div>
+        )}
+
         {/* 输入框 */}
         <Textarea
-          placeholder={`记录${isSelectingToday ? '今天' : displayDate}的${currentTypeConfig.label}...`}
+          placeholder={
+            currentType === 'emotion' && currentEmotionSubtype
+              ? `记录${EMOTION_SUBTYPES[currentEmotionSubtype].label}的心情...`
+              : `记录${isSelectingToday ? '今天' : displayDate}的${currentTypeConfig.label}...`
+          }
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
@@ -182,6 +200,9 @@ export default function TodayPage() {
         ) : (
           todayAchievements.map((achievement) => {
             const typeConfig = RECORD_TYPES[achievement.type || 'achievement']
+            const emotionConfig = achievement.type === 'emotion' && achievement.emotionSubtype
+              ? EMOTION_SUBTYPES[achievement.emotionSubtype]
+              : null
             return (
               <TypeCard
                 key={achievement.id}
@@ -212,7 +233,22 @@ export default function TodayPage() {
                         className="h-4 w-4 shrink-0 mt-0.5"
                         style={{ color: typeConfig.color }}
                       />
-                      <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
+                      <div className="flex-1">
+                        {/* 情绪子类型标签 */}
+                        {emotionConfig && (
+                          <Badge
+                            variant="secondary"
+                            className="text-xs mb-1.5"
+                            style={{
+                              backgroundColor: `${emotionConfig.color}20`,
+                            }}
+                          >
+                            <emotionConfig.icon className="h-3 w-3 mr-1" />
+                            {emotionConfig.label}
+                          </Badge>
+                        )}
+                        <p className="text-sm leading-relaxed">{achievement.content}</p>
+                      </div>
                       <div className="flex gap-1">
                         <Button
                           size="icon"
