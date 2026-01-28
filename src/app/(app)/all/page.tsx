@@ -139,15 +139,19 @@ export default function AllPage() {
                       contentProps={{ className: 'pt-3' }}
                     >
                       <div className="flex gap-2">
-                          <typeConfig.icon className="h-4 w-4 shrink-0 mt-0.5" style={{ color: typeConfig.color }} />
-                          <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-8 w-8 text-destructive shrink-0"
-                            onClick={() => handleDelete(achievement.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
+                        <typeConfig.icon className="h-4 w-4 shrink-0 mt-0.5" style={{ color: typeConfig.color }} />
+                        <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-destructive shrink-0"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDelete(achievement.id)
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TypeCard>
