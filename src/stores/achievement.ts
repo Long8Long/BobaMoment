@@ -150,6 +150,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
     try {
       await achievementDb.delete(id)
       await get().loadTodayAchievements()
+      await get().loadAllAchievements()
       await get().loadRecordedDates()
     } catch {
       set({ error: '删除成就失败', isLoading: false })
