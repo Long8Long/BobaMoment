@@ -23,6 +23,7 @@ import { DatePickerButton } from '@/components/feature/DatePickerButton'
 import { MotivationCarousel } from '@/components/feature/MotivationCarousel'
 import { EmotionSubtypeSelector } from '@/components/feature/EmotionSubtypeSelector'
 import { RECORD_TYPES, EMOTION_SUBTYPES } from '@/lib/db'
+import { formatDateToLocal } from '@/lib/utils'
 
 const TARGET_COUNT = 3
 
@@ -46,7 +47,7 @@ export default function TodayPage() {
   const [editContent, setEditContent] = useState('')
 
   // 计算今天的日期
-  const today = useMemo(() => new Date().toISOString().split('T')[0], [])
+  const today = useMemo(() => formatDateToLocal(new Date()), [])
   const isSelectingToday = isToday(new Date(selectedDate))
   const displayDate = useMemo(() => {
     return format(new Date(selectedDate), 'yyyy年MM月dd日', { locale: zhCN })

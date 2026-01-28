@@ -8,6 +8,7 @@
 
 import { create } from 'zustand'
 import { achievementDb, type Achievement, type RecordType, type EmotionSubtype } from '@/lib/db'
+import { formatDateToLocal } from '@/lib/utils'
 
 interface AchievementState {
   // 状态
@@ -50,7 +51,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   error: null,
   currentType: 'achievement',
   typeStats: { achievement: 0, gratitude: 0, emotion: 0 },
-  selectedDate: new Date().toISOString().split('T')[0], // 默认今天
+  selectedDate: formatDateToLocal(new Date()), // 默认今天
   currentEmotionSubtype: null,  // 默认不选中任何子类型
 
   // 加载今日成就
@@ -91,7 +92,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   addAchievement: async (content: string, type?: RecordType) => {
     set({ isLoading: true, error: null })
     try {
-      const today = new Date().toISOString().split('T')[0]
+      const today = formatDateToLocal(new Date())
       const recordType = type || get().currentType
       // 如果是情绪类型，携带当前选中的子类型
       const subtype = recordType === 'emotion' ? (get().currentEmotionSubtype ?? undefined) : undefined
@@ -118,7 +119,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
       const subtype = recordType === 'emotion' ? (get().currentEmotionSubtype ?? undefined) : undefined
       await achievementDb.add(content, date, recordType, subtype)
       // 如果是今天，刷新今日成就
-      const today = new Date().toISOString().split('T')[0]
+      const today = formatDateToLocal(new Date())
       if (date === today) {
         await get().loadTodayAchievements()
       }
@@ -189,7 +190,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => ({
   // 加载类型统计
   loadTypeStats: async () => {
     try {
-      const today = new Date().toISOString().split('T')[0]
+      const today = formatDateToLocal(new Date())
       const achievements = await achievementDb.getByDate(today)
       const stats = {
         achievement: achievements.filter(a => (a.type || 'achievement') === 'achievement').length,

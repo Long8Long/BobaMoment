@@ -12,6 +12,7 @@ import {
   Frown, Zap, Ghost, Waves,
   Eye, Award, HeartCrack, Sparkles, Flame
 } from 'lucide-react'
+import { formatDateToLocal } from '@/lib/utils'
 
 /**
  * 记录类型枚举
@@ -299,7 +300,7 @@ export const achievementDb = {
    * 获取今天的所有成就
    */
   async getToday(): Promise<Achievement[]> {
-    const today = new Date().toISOString().split('T')[0]
+    const today = formatDateToLocal(new Date())
     return this.getByDate(today)
   },
 

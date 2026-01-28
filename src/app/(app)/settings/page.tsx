@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import Image from 'next/image'
 import { db } from '@/lib/db'
+import { formatDateToLocal } from '@/lib/utils'
 
 export default function SettingsPage() {
   const [isExporting, setIsExporting] = useState(false)
@@ -40,7 +41,7 @@ export default function SettingsPage() {
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = `bobamoment-backup-${new Date().toISOString().split('T')[0]}.json`
+      link.download = `bobamoment-backup-${formatDateToLocal(new Date())}.json`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
