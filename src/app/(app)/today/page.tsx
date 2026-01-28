@@ -130,14 +130,16 @@ export default function TodayPage() {
 
       {/* 类型选择器 + 日期选择 + 输入区域 */}
       <TypeCard type={currentType} className="mb-6" contentProps={{ className: 'pt-0' }}>
-        {/* 类型选择器 + 日期选择器 */}
-        <div className="flex items-center justify-between gap-2 mb-4">
-          <div className="flex-1">
-            <RecordTypeSelector
-              value={currentType}
-              onChange={setCurrentType}
-            />
-          </div>
+        {/* 类型选择器 */}
+        <div className="mb-3">
+          <RecordTypeSelector
+            value={currentType}
+            onChange={setCurrentType}
+          />
+        </div>
+
+        {/* 日期选择器 */}
+        <div className="mb-4">
           <DatePickerButton
             selectedDate={selectedDate}
             onSelectDate={setSelectedDate}
