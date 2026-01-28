@@ -1,9 +1,9 @@
 /**
- * Input: useAchievementStore (状态)
- * Output: 全部记录列表界面（显示成就/感念类型标识）
+ * Input: useAchievementStore (状态), sonner (toast提示)
+ * Output: 全部记录列表界面（显示成就/感念类型标识），删除成功后显示toast提示
  * Position: 主要功能页面，P1功能
  *
- * 更新规范: 一旦本文件被更新，务必更新开头的注释，以及所属文件夹的 README.md 文件
+ * 更新规范: 一旦本文件被更新，务必更新开头的注释，以及所属文件夹的 CLAUDE.md 文件
  */
 
 'use client'
@@ -19,6 +19,7 @@ import { Search, Trash2 } from 'lucide-react'
 import { format, isToday } from 'date-fns'
 import { zhCN } from 'date-fns/locale/zh-CN'
 import { achievementDb, type Achievement, RECORD_TYPES } from '@/lib/db'
+import { toast } from 'sonner'
 
 
 export default function AllPage() {
@@ -60,6 +61,7 @@ export default function AllPage() {
   const handleDelete = async (id: string) => {
     if (confirm('确定要删除这条记录吗？')) {
       await deleteAchievement(id)
+      toast.success('删除成功')
       if (isSearching) {
         handleSearch()
       }
