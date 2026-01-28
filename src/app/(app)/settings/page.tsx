@@ -121,7 +121,8 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="container max-w-md space-y-6 px-4 py-8">
+    <div className="container max-w-md mx-auto px-4 py-6">
+      <div className="space-y-6">
       {/* 数据管理 */}
       <Card className="rounded-md">
         <CardHeader>
@@ -339,6 +340,7 @@ export default function SettingsPage() {
           </p>
         </CardContent>
       </Card>
+      </div>
     </div>
   )
 }
