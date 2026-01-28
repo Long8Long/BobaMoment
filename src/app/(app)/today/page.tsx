@@ -143,9 +143,6 @@ export default function TodayPage() {
             onSelectDate={setSelectedDate}
           />
         </div>
-        <p className="text-xs text-muted-foreground mb-4 text-center">
-          {currentTypeConfig.description}
-        </p>
 
         {/* 情绪子类型选择器 - 仅在情绪类型时显示 */}
         {currentType === 'emotion' && (

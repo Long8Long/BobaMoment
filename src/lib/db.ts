@@ -24,19 +24,16 @@ export type RecordType = 'achievement' | 'gratitude' | 'emotion'
 export const RECORD_TYPES = {
   achievement: {
     label: '成就',
-    description: '记录小成就',
     icon: Trophy,
     color: '#D2691E', // 巧克力橘 - 明亮系
   },
   gratitude: {
     label: '感念',
-    description: '感恩的人/事',
     icon: Heart,
     color: '#6B8E23', // 深橄榄绿 - 沉稳系
   },
   emotion: {
     label: '情绪',
-    description: '记录当下的心情',
     icon: Smile,
     color: '#9370DB', // 中紫色 - 情感系
   },
