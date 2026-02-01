@@ -36,17 +36,20 @@ src/
 ## 开发命令
 
 ```bash
+# 安装依赖
+pnpm install
+
 # 开发
-npm run dev
+pnpm dev
 
 # 构建
-npm run build
+pnpm build
 
 # 启动生产服务
-npm start
+pnpm start
 
 # Lint
-npm run lint
+pnpm lint
 ```
 
 ## PWA功能
