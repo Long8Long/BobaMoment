@@ -22,7 +22,8 @@ import { TypeCard } from '@/components/feature/TypeCard'
 import { DatePickerButton } from '@/components/feature/DatePickerButton'
 import { MotivationCarousel } from '@/components/feature/MotivationCarousel'
 import { EmotionSubtypeSelector } from '@/components/feature/EmotionSubtypeSelector'
-import { RECORD_TYPES, EMOTION_SUBTYPES } from '@/lib/db'
+import { RecordCard } from '@/components/feature/RecordCard'
+import { RECORD_TYPES } from '@/lib/db'
 import { formatDateToLocal } from '@/lib/utils'
 
 const TARGET_COUNT = 3
@@ -187,7 +188,7 @@ export default function TodayPage() {
         </div>
       </TypeCard>
 
-      {/* 记录列表 - 根据类型显示不同样式 */}
+      {/* 记录列表 - 使用统一的 RecordCard */}
       <div className="space-y-3">
         {todayAchievements.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
@@ -195,80 +196,38 @@ export default function TodayPage() {
             <p className="text-sm mt-1">开始记录你的第一条{currentTypeConfig.label}吧！</p>
           </div>
         ) : (
-          todayAchievements.map((achievement) => {
-            const typeConfig = RECORD_TYPES[achievement.type || 'achievement']
-            const emotionConfig = achievement.type === 'emotion' && achievement.emotionSubtype
-              ? EMOTION_SUBTYPES[achievement.emotionSubtype]
-              : null
-            return (
-              <TypeCard
-                key={achievement.id}
-                type={achievement.type || 'achievement'}
-                contentProps={{ className: 'pt-4' }}
-              >
-                {editingId === achievement.id ? (
-                    <div className="space-y-2">
-                      <Textarea
-                        value={editContent}
-                        onChange={(e) => setEditContent(e.target.value)}
-                        rows={3}
-                        maxLength={200}
-                        className="resize-none"
-                      />
-                      <div className="flex gap-2">
-                        <Button size="sm" onClick={() => handleSaveEdit(achievement.id)}>
-                          保存
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={handleCancelEdit}>
-                          取消
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2">
-                      <typeConfig.icon
-                        className="h-4 w-4 shrink-0 mt-0.5"
-                        style={{ color: typeConfig.color }}
-                      />
-                      <div className="flex-1">
-                        {/* 情绪子类型标签 */}
-                        {emotionConfig && (
-                          <Badge
-                            variant="secondary"
-                            className="text-xs mb-1.5"
-                            style={{
-                              backgroundColor: `${emotionConfig.color}20`,
-                            }}
-                          >
-                            <emotionConfig.icon className="h-3 w-3 mr-1" />
-                            {emotionConfig.label}
-                          </Badge>
-                        )}
-                        <p className="text-sm leading-relaxed">{achievement.content}</p>
-                      </div>
-                      <div className="flex gap-1">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8"
-                          onClick={() => handleEdit(achievement.id, achievement.content)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8 text-destructive"
-                          onClick={() => handleDelete(achievement.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-              </TypeCard>
-            )
-          })
+          <>
+            {editingId === null ? (
+              todayAchievements.map((achievement) => (
+                <RecordCard
+                  key={achievement.id}
+                  achievement={achievement}
+                  variant="today"
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))
+            ) : (
+              // 编辑模式
+              <div className="space-y-2">
+                <Textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  rows={3}
+                  maxLength={200}
+                  className="resize-none"
+                />
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={() => handleSaveEdit(editingId!)}>
+                    保存
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handleCancelEdit}>
+                    取消
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 

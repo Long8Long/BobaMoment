@@ -13,6 +13,7 @@ import { useAchievementStore } from '@/stores/achievement'
 import { Calendar } from '@/components/ui/calendar'
 import { TypeCard } from '@/components/feature/TypeCard'
 import { Badge } from '@/components/ui/badge'
+import { RecordCard } from '@/components/feature/RecordCard'
 import { format } from 'date-fns'
 import { zhCN } from 'date-fns/locale/zh-CN'
 import { achievementDb, type Achievement, RECORD_TYPES } from '@/lib/db'
@@ -89,32 +90,13 @@ export default function CalendarPage() {
               <p>当天没有记录</p>
             </div>
           ) : (
-            selectedAchievements.map((achievement) => {
-              const typeConfig = RECORD_TYPES[achievement.type || 'achievement']
-              return (
-                <TypeCard
-                  key={achievement.id}
-                  type={achievement.type || 'achievement'}
-                  contentProps={{ className: 'pt-4' }}
-                >
-                  <div className="flex gap-2">
-                    <typeConfig.icon className="h-4 w-4 shrink-0 mt-0.5" style={{ color: typeConfig.color }} />
-                    <p className="flex-1 text-sm leading-relaxed">{achievement.content}</p>
-                  </div>
-                  <div className="flex gap-2 mt-2">
-                    <Badge variant="outline" className="text-xs" style={{ borderColor: typeConfig.color, color: typeConfig.color }}>
-                      {typeConfig.label}
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {new Date(achievement.createdAt).toLocaleTimeString('zh-CN', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </Badge>
-                  </div>
-                </TypeCard>
-              )
-            })
+            selectedAchievements.map((achievement) => (
+              <RecordCard
+                key={achievement.id}
+                achievement={achievement}
+                variant="calendar"
+              />
+            ))
           )}
         </div>
       </div>
